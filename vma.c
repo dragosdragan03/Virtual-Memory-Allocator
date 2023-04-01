@@ -337,9 +337,10 @@ void pmap(const arena_t *arena)
     int numar_blockuri = 0;
     int numar_miniblockuri = 0;
     dll_node_t *curr = arena->alloc_list->head;
+    dll_node_t *minicurr;
     while (curr) {
-        free_size = free_size - ((block_t *)(curr->data))->size;
-        dll_node_t *minicurr = ((doubly_linked_list_t *)(((block_t *)curr->data)->miniblock_list))->head;
+        free_size = free_size - ((block_t *)curr->data)->size;
+        minicurr = ((doubly_linked_list_t *)(((block_t *)curr->data)->miniblock_list))->head;
         while (minicurr) {
             numar_miniblockuri++;
             minicurr = minicurr->next;
@@ -352,6 +353,49 @@ void pmap(const arena_t *arena)
     printf("Number of allocated blocks: %d\n", numar_blockuri);
     printf("Number of allocated miniblocks: %d\n", numar_miniblockuri);
 
+    curr = arena->alloc_list->head;
+    numar_blockuri = 1;
+    while (curr) {
+        uint64_t adresa_inceput = ((block_t *)curr->data)->start_address; // adresa de inceput a blockului
+        size_t size = ((block_t *)(curr->data))->size; // size ul blockului
+        uint64_t adresa_final = adresa_inceput + size;
+
+        printf("Block %d begin\n", numar_blockuri);
+        printf("Zone: %lld - %lld\n", adresa_inceput, adresa_final);
+
+        minicurr = ((doubly_linked_list_t *)(((block_t *)curr->data)->miniblock_list))->head;
+        numar_miniblockuri = 0;
+        while (minicurr) {
+            printf("Miniblock %d:", numar_miniblockuri);
+            adresa_inceput = ((miniblock_t *)((block_t *)curr->data)->miniblock_list)->start_address;
+            size = ((miniblock_t *)((block_t *)curr->data)->miniblock_list)->start_address;
+            adresa_final = ((miniblock_t *)((block_t *)curr->data)->miniblock_list)->start_address + size;
+            printf("\t\t%lld\t\t-\t\t%lld\t\t|", adresa_inceput, adresa_final);
+            int permisiune = ((miniblock_t *)((block_t *)curr->data)->miniblock_list)->perm;
+            if (permisiune == 0)
+                printf(" ---\n");
+            if (permisiune == 1)
+                printf(" --X\n");
+            if (permisiune == 2)
+                printf(" -W-\n");
+            if (permisiune == 3)
+                printf(" -WX\n");
+            if (permisiune == 4)
+                printf(" R--\n");
+            if (permisiune == 5)
+                printf(" R-X\n");
+            if (permisiune == 6)
+                printf(" RW-\n");
+            if (permisiune == 7)
+                printf(" RWX\n");
+
+            numar_miniblockuri++;
+            minicurr = minicurr->next;
+        }
+        printf("Block %d end\n", numar_blockuri);
+        numar_blockuri++;
+        curr = curr->next;
+    }
 
 }
 
