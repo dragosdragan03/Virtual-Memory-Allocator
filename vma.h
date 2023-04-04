@@ -12,12 +12,12 @@ typedef struct dll_node_t //structura pentru un nod
 	struct dll_node_t* prev, * next;
 } dll_node_t;
 
-typedef struct doubly_linked_list_t //structura pentru lista
+typedef struct doubly_list_t //structura pentru lista
 {
 	dll_node_t* head;
 	unsigned int data_size;
 	unsigned int size; // cate noduri sunt
-} doubly_linked_list_t;
+} doubly_list_t;
 
 typedef struct {
 	uint64_t start_address; // adresa de inceput a blocului
@@ -34,16 +34,16 @@ typedef struct {
 
 typedef struct { // o lista
 	uint64_t arena_size; // size ul arenei
-	doubly_linked_list_t* alloc_list; // pointer catre lista dublu inlantuita
+	doubly_list_t* alloc_list; // pointer catre lista dublu inlantuita
 } arena_t;
 
-doubly_linked_list_t* dll_create(unsigned int data_size);
+doubly_list_t* dll_create(unsigned int data_size);
 
-dll_node_t* dll_get_nth_node(doubly_linked_list_t* list, unsigned int n);
+dll_node_t* dll_get_nth_node(doubly_list_t* list, unsigned int n);
 dll_node_t* create_node(void* new_data, int data_size);
-void dll_add_nth_node(doubly_linked_list_t* list, unsigned int n, const void* data);
-dll_node_t* dll_remove_nth_node(doubly_linked_list_t* list, unsigned int n);
-void dll_free(doubly_linked_list_t** pp_list);
+void dll_add_nth_node(doubly_list_t* list, unsigned int n, const void* data);
+void dll_remove_nth_node(doubly_list_t* list, unsigned int n);
+void dll_free(doubly_list_t** pp_list);
 
 arena_t* alloc_arena(const uint64_t size);
 void dealloc_arena(arena_t* arena);

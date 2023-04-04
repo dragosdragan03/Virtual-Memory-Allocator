@@ -69,7 +69,7 @@ int main(void)
             mprotect(arena, adresa, permisiune);
             continue;
         }
-        printf("Invalid command\n");
+        printf("Invalid command.Please try again.\n");
     }
 
     return 0;
