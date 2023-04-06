@@ -9,8 +9,8 @@ int main(void)
         char token[100];
         scanf("%s", token);
         if (strcmp(token, "ALLOC_ARENA") == 0) {
-            int dimensiune;
-            scanf("%d", &dimensiune);
+            uint64_t dimensiune;
+            scanf("%lu", &dimensiune);
             arena = alloc_arena(dimensiune);
             continue;
         }
@@ -68,7 +68,7 @@ int main(void)
 
             continue;
         }
-        printf("Invalid command.Please try again.\n");
+        printf("Invalid command. Please try again.\n");
     }
 
     return 0;
