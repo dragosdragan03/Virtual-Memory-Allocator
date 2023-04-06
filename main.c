@@ -63,14 +63,8 @@ int main(void)
             uint64_t adresa;
             scanf("%ld", &adresa);
             fgets(sir, 100, stdin);
-            char* perm = strtok(sir, " ");
             int8_t* permisiune;
-            while (perm) {
-                strcpy(permisiune, perm);
-                if (perm != "|")
-                    mprotect(arena, adresa, permisiune);
-                perm = strtok(NULL, " ");
-            }
+            
 
             continue;
         }
