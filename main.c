@@ -3,11 +3,11 @@
 int main(void)
 {
     char sir[100];
+    char token[100];
 
-    while (1) { // citesc cat timp sunt randuri de citit
+    while (scanf("%s", token)) { // citesc cat timp sunt randuri de citit
         arena_t* arena;
-        char token[100];
-        scanf("%s", token);
+
         if (strcmp(token, "ALLOC_ARENA") == 0) {
             uint64_t dimensiune;
             scanf("%lu", &dimensiune);
@@ -64,7 +64,7 @@ int main(void)
             scanf("%ld", &adresa);
             fgets(sir, 100, stdin);
             int8_t* permisiune;
-            
+
 
             continue;
         }
