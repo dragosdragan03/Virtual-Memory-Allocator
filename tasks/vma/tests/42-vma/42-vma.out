@@ -5,5 +5,5 @@ Number of allocated miniblocks: 1
 
 Block 1 begin
 Zone: 0xA - 0x6E
-Miniblock 1:		0xA		-		0x6E		| RW-
+Miniblock 1:		0xA		-		0x6E		| RWX
 Block 1 end
