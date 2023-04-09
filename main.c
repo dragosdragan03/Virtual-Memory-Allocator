@@ -23,6 +23,13 @@ int main(void)
 			scanf("%ld", &adresa);
 			uint64_t dimensiune;
 			scanf("%ld", &dimensiune);
+			if (adresa >= arena->arena_size) {
+				printf("The allocated address is outside the size of arena\n");
+				continue;
+			} else if (adresa + dimensiune > arena->arena_size) {
+				printf("The end address is past the size of the arena\n");
+				continue;
+			}
 			alloc_block(arena, adresa, dimensiune);
 			continue;
 		}

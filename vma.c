@@ -24,9 +24,15 @@ dll_node_t *dll_get_nth_node(doubly_list_t *list, unsigned int n)
 
 dll_node_t *create_node(void *new_data, int data_size) // creez un nod
 {
-	dll_node_t *new_node = malloc(sizeof(dll_node_t)); // aloc diamic un nod
-	new_node->data = malloc(data_size);                // aloca spatiu pentru tipul de data adaugat
-	memcpy(new_node->data, new_data, data_size);       // copiaza in new_node, ce contine new_data cu size ul respectiv
+	// aloc diamic un nod
+	dll_node_t *new_node = malloc(sizeof(dll_node_t));
+
+	// aloca spatiu pentru tipul de data adaugat
+	new_node->data = malloc(data_size);
+
+	// copiaza in new_node, ce contine new_data cu size ul respectiv
+	memcpy(new_node->data, new_data, data_size);
+
 	return new_node;
 }
 
@@ -48,7 +54,6 @@ void dll_add_nth_node(doubly_list_t *list, unsigned int n, const void *data)
 
 		list->head->prev->next = new_node;
 		list->head->prev = new_node;
-
 		list->head = new_node;
 		list->size++;
 		return;
@@ -66,7 +71,6 @@ void dll_add_nth_node(doubly_list_t *list, unsigned int n, const void *data)
 	curr->next = new_node;
 	new_node->next->prev = new_node;
 	list->size++;
-	return;
 }
 
 void dll_remove_nth_node(doubly_list_t *list, unsigned int n)
@@ -100,7 +104,6 @@ void dll_remove_nth_node(doubly_list_t *list, unsigned int n)
 
 	free(aux->data);
 	free(aux);
-	return;
 }
 
 void dll_free(doubly_list_t **pp_list)
@@ -120,7 +123,7 @@ void dll_free(doubly_list_t **pp_list)
 	free(*pp_list);
 }
 
-arena_t *alloc_arena(const uint64_t size) // aloc arena de blockuri cu parametrul size
+arena_t *alloc_arena(const uint64_t size)
 {
 	arena_t *arena = malloc(sizeof(arena_t));
 	arena->arena_size = size;
@@ -140,7 +143,9 @@ void dealloc_arena(arena_t *arena)
 		return;
 	}
 
-	dll_node_t *curr = arena->alloc_list->head; // nod de parcurgere a blockurilor
+	// nod de parcurgere a blockurilor
+	dll_node_t *curr = arena->alloc_list->head;
+
 	do { // parcurg blockurile
 		block_t *block = (block_t *)curr->data;
 		minicurr = ((doubly_list_t *)block->miniblock_list)->head;
@@ -152,7 +157,8 @@ void dealloc_arena(arena_t *arena)
 			minicurr = cop;
 		} while (minicurr != ((doubly_list_t *)block->miniblock_list)->head);
 		cop = curr->next;
-		free(((block_t *)curr->data)->miniblock_list); // elibereaza lista de miniblockuri
+		// elibereaza lista de miniblockuri
+		free(((block_t *)curr->data)->miniblock_list);
 		free(curr->data); // elibereaza data blockului
 		free(curr); // elibereaza blockul
 		curr = cop;
@@ -172,7 +178,6 @@ int numar_nod(arena_t *arena, dll_node_t *nod)
 		numar++;
 		curr = curr->next;
 	} while (curr != arena->alloc_list->head);
-
 }
 
 int numar_miniblock(arena_t *arena, dll_node_t *minicurr, dll_node_t *curr)
@@ -189,14 +194,16 @@ int numar_miniblock(arena_t *arena, dll_node_t *minicurr, dll_node_t *curr)
 	return numar;
 }
 
-dll_node_t *verificare_block(arena_t *arena, const uint64_t address, const uint64_t size)
+dll_node_t *verificare_block(arena_t *arena, const uint64_t address
+	, const uint64_t size)
 {
 	dll_node_t *curr;
 	if (arena->alloc_list->size == 0)
 		return NULL;
 
-	uint64_t dimensiune = address + size;
-	if (dimensiune <= ((block_t *)arena->alloc_list->head->data)->start_address) // verific daca e inaintea headului
+	// verific daca e inaintea headului
+	uint64_t dimens = address + size; // dimensiune
+	if (dimens <= ((block_t *)arena->alloc_list->head->data)->start_address)
 		return NULL;
 
 	curr = arena->alloc_list->head;
@@ -213,7 +220,6 @@ dll_node_t *verificare_block(arena_t *arena, const uint64_t address, const uint6
 	} while (curr != arena->alloc_list->head);
 
 	return NULL;
-
 }
 
 dll_node_t *verificare_miniblock(arena_t *arena, const uint64_t address)
@@ -238,18 +244,19 @@ dll_node_t *verificare_miniblock(arena_t *arena, const uint64_t address)
 	return NULL; // nu a fost gasit miniblockul cu adresa respecitva
 }
 
-dll_node_t *verificare_miniblock_write(arena_t *arena, const uint64_t address,
-	dll_node_t *curr)
+dll_node_t *verificare_miniblock_write(arena_t *arena, const uint64_t address
+	, dll_node_t *curr)
 {
+	// headul listei de miniblockui, al blockului
 	block_t *block1 = ((block_t *)curr->data);
-	dll_node_t *minicurr = ((doubly_list_t *)block1->miniblock_list)->head; // headul listei de miniblockui, al blockului
+	dll_node_t *minicurr = ((doubly_list_t *)block1->miniblock_list)->head;
 
 	do {
-		uint64_t adresa_inceput = ((miniblock_t *)minicurr->data)->start_address;
+		uint64_t adr_inceput = ((miniblock_t *)minicurr->data)->start_address;
 		uint64_t size = ((miniblock_t *)minicurr->data)->size;
-		uint64_t adresa_final = adresa_inceput + size;
+		uint64_t adresa_final = adr_inceput + size;
 
-		if (adresa_inceput <= address && address < adresa_final)
+		if (adr_inceput <= address && address < adresa_final)
 			return minicurr;
 
 		minicurr = minicurr->next;
@@ -258,16 +265,17 @@ dll_node_t *verificare_miniblock_write(arena_t *arena, const uint64_t address,
 	return NULL; // nu a fost gasit miniblockul cu adresa respecitva
 }
 
-dll_node_t *verificare_miniblock_mprotect(arena_t *arena, const uint64_t address,
-	dll_node_t *curr)
+dll_node_t *verificare_miniblock_mprotect(arena_t *arena
+	, const uint64_t address, dll_node_t *curr)
 {
 	block_t *block1 = ((block_t *)curr->data);
-	dll_node_t *minicurr = ((doubly_list_t *)block1->miniblock_list)->head; // headul listei de miniblockui, al blockului
+	// headul listei de miniblockui, al blockului
+	dll_node_t *minicurr = ((doubly_list_t *)block1->miniblock_list)->head;
 
 	do {
-		uint64_t adresa_inceput = ((miniblock_t *)minicurr->data)->start_address;
+		uint64_t adr_inceput = ((miniblock_t *)minicurr->data)->start_address;
 
-		if (adresa_inceput == address)
+		if (adr_inceput == address)
 			return minicurr;
 
 		minicurr = minicurr->next;
@@ -314,13 +322,6 @@ doubly_list_t *imbinare_liste(doubly_list_t *list1, doubly_list_t *list2)
 {
 	dll_node_t *aux = list1->head->prev;
 
-	// for (int j = 0; j < list2->size; j++) {
-	// 	dll_add_nth_node(list1, list1->size + j, curr->data);
-	// 	curr = curr->next;
-	// }
-
-	// dll_free(&list2);
-
 	list1->head->prev->next = list2->head;
 	list1->head->prev = list2->head->prev;
 	list2->head->prev->next = list1->head;
@@ -338,8 +339,10 @@ int adresa_valida(arena_t *arena, const uint64_t address, const uint64_t size)
 	if (arena->alloc_list->size == 0)
 		return 1;
 
+	// verific daca e inaintea headului
 	uint64_t dimensiune = address + size;
-	if (dimensiune <= ((block_t *)arena->alloc_list->head->data)->start_address) // verific daca e inaintea headului
+	block_t *block = (block_t *)arena->alloc_list->head->data;
+	if (dimensiune <= block->start_address)
 		return 1;
 
 	dll_node_t *curr = arena->alloc_list->head;
@@ -358,16 +361,49 @@ int adresa_valida(arena_t *arena, const uint64_t address, const uint64_t size)
 	return 0;
 }
 
-void alloc_block_alone(arena_t *arena, const uint64_t address,
-	const uint64_t size, uint64_t adr_fin, uint64_t adr_inc, dll_node_t *curr)
+uint64_t adresa_final(arena_t *arena, dll_node_t *curr)
 {
-	block_t *block = malloc(sizeof(block_t)); // am aloicat dinamic blockul ce urmeaza sa fie pus
-	block->start_address = address; // am dat adrsa blockului
-	block->size = size; // am pus size ul blockului
+	uint64_t adresa_final;
 
-	block->miniblock_list = dll_create(sizeof(miniblock_t)); // aloc lista de miniblock
+	if (!curr) {
+		adresa_final = 0;
+	} else {
+		block_t *block = ((block_t *)curr->data);
+		adresa_final = block->start_address + block->size;
+	}
+	return adresa_final;
+}
+
+uint64_t adresa_inceput(arena_t *arena, dll_node_t *curr)
+{
+	uint64_t adresa_inceput;
+
+	if (!curr) {
+		block_t *block = (block_t *)arena->alloc_list->head->data;
+		adresa_inceput = block->start_address;
+	} else if (curr == arena->alloc_list->head->prev) {
+		adresa_inceput = arena->arena_size;
+	} else {
+		adresa_inceput = ((block_t *)curr->next->data)->start_address;
+	}
+	return adresa_inceput;
+}
+
+void alloc_block_alone(arena_t *arena, const uint64_t address
+	, const uint64_t size, uint64_t adr_fin, dll_node_t *curr)
+{
+	// am aloicat dinamic blockul ce urmeaza sa fie pus
+	block_t *block = malloc(sizeof(block_t));
+	// am dat adresa blockului
+	block->start_address = address;
+	// am pus size ul blockului
+	block->size = size;
+
+	// aloc lista de miniblock
+	block->miniblock_list = dll_create(sizeof(miniblock_t));
 	miniblock_t *miniblock = malloc(sizeof(miniblock_t));
-	miniblock->start_address = address; // start address ul miniblockului
+	// start address ul miniblockului
+	miniblock->start_address = address;
 	miniblock->size = size;
 	miniblock->perm = 6;
 	miniblock->rw_buffer = malloc(1);
@@ -375,70 +411,85 @@ void alloc_block_alone(arena_t *arena, const uint64_t address,
 
 	free(miniblock);
 
-	if (curr == NULL || adr_fin == 0)  // in cazul in care e primul block
+	if (!curr || !adr_fin)  // in cazul in care e primul block
 		dll_add_nth_node(arena->alloc_list, 0, block);
 	else
 		dll_add_nth_node(arena->alloc_list, numar_nod(arena, curr) + 1, block);
 
 	free(block);
+}
 
-	return;
+void alloc_block_mijloc(arena_t *arena, const uint64_t address
+	, const uint64_t size, doubly_list_t *lista_miniblock, dll_node_t *curr)
+{
+	block_t *block = (block_t *)curr->data;
+	doubly_list_t *list = ((doubly_list_t *)block->miniblock_list);
+	// refac size ul intregului block
+	block->size = block->size + size + ((block_t *)curr->next->data)->size;
+	doubly_list_t *lista1 = imbinare_liste(list, lista_miniblock);
+	doubly_list_t *lista_final = imbinare_liste(lista1,
+		((doubly_list_t *)((block_t *)curr->next->data)->miniblock_list));
+	block->miniblock_list = lista_final; // ii atribui lista corecta blockului
+	dll_remove_nth_node(arena->alloc_list, numar_nod(arena, curr->next));
+}
+
+void alloc_block_dreapta(arena_t *arena, const uint64_t address
+	, const uint64_t size, doubly_list_t *lista_miniblock, dll_node_t *curr)
+{
+	if (!curr)
+		curr = arena->alloc_list->head->prev;
+
+	block_t *block = (block_t *)curr->next->data;
+	block->size = block->size + size;
+	block->start_address = address;
+	doubly_list_t *lista = imbinare_liste(lista_miniblock,
+		(doubly_list_t *)block->miniblock_list);
+
+	// ii atribui lista corecta blockului intreg
+	block->miniblock_list = lista;
 }
 
 void alloc_block(arena_t *arena, const uint64_t address, const uint64_t size)
 {
 	// blockul de dinaintea adresei
 	dll_node_t *curr = verificare_block(arena, address, size);
-	uint64_t adresa_final;
-	uint64_t adresa_inceput;
-
-	if (address >= arena->arena_size) {
-		printf("The allocated address is outside the size of arena\n");
-		return;
-	} else if (address + size > arena->arena_size) {
-		printf("The end address is past the size of the arena\n");
-		return;
-	}
+	uint64_t adr_final;
+	uint64_t adr_inceput;
 	if (!adresa_valida(arena, address, size)) {
 		printf("This zone was already allocated.\n");
 		return;
 	}
+
 	if (arena->alloc_list->size == 1) {
-		if (address + size <= ((block_t *)arena->alloc_list->head->data)->start_address) {
-			adresa_final = 0;
-			adresa_inceput = ((block_t *)arena->alloc_list->head->data)->start_address;
+		block_t *list_head = ((block_t *)arena->alloc_list->head->data);
+		if (address + size <= list_head->start_address) {
+			adr_final = 0;
+			adr_inceput = list_head->start_address;
 		} else {
-			adresa_final = ((block_t *)arena->alloc_list->head->data)->start_address + ((block_t *)arena->alloc_list->head->data)->size;
-			adresa_inceput = arena->arena_size;
+			adr_final = list_head->start_address + list_head->size;
+			adr_inceput = arena->arena_size;
 		}
 		goto jump;
 	} else if (!arena->alloc_list->size) {
-		adresa_final = 0;
-		adresa_inceput = arena->arena_size;
+		adr_final = 0;
+		adr_inceput = arena->arena_size;
 		goto jump;
 	}
 
-	if (!curr)
-		adresa_final = 0;
-	else
-		adresa_final = ((block_t *)curr->data)->start_address + ((block_t *)curr->data)->size;
-
-	if (!curr)
-		adresa_inceput = ((block_t *)arena->alloc_list->head->data)->start_address;
-	else if (curr == arena->alloc_list->head->prev)
-		adresa_inceput = arena->arena_size;
-	else
-		adresa_inceput = ((block_t *)curr->next->data)->start_address;
+	adr_final = adresa_final(arena, curr);
+	adr_inceput = adresa_inceput(arena, curr);
 
 jump:
 
-	if (((adresa_final < address || adresa_final == 0) &&
-		address + size < adresa_inceput) || arena->alloc_list->size == 0 || (adresa_final < address && adresa_inceput == arena->arena_size)) { // in cazul in care blockul este singur si trebuie alocat
-		alloc_block_alone(arena, address, size, adresa_final, adresa_inceput, curr);
+	uint64_t dim_block = address + size;
+	if (((adr_final < address || !adr_final) && dim_block < adr_inceput) ||
+		!arena->alloc_list->size ||
+		(adr_final < address && adr_inceput == arena->arena_size)) {
+		alloc_block_alone(arena, address, size, adr_final, curr);
 		return;
 	}
-
-	doubly_list_t *lista_miniblock = dll_create(sizeof(miniblock_t)); // creez lista pentru singurul miniblock
+	// creez lista pentru singurul miniblock
+	doubly_list_t *lista_miniblock = dll_create(sizeof(miniblock_t));
 	miniblock_t *miniblock = malloc(sizeof(miniblock_t)); // creez miniblockul
 	miniblock->size = size;
 	miniblock->perm = 6;
@@ -447,43 +498,29 @@ jump:
 	dll_add_nth_node(lista_miniblock, 0, miniblock); // il adaug in lista
 	free(miniblock);
 
-	if ((adresa_final < address && address + size == adresa_inceput) || (adresa_final == address && adresa_final == 0)) // e lipit de blockul din dreapta
-	{
-		if (curr == NULL)
-			curr = arena->alloc_list->head->prev;
-		block_t *block = ((block_t *)curr->next->data);
-		block->size = block->size + size;
-		block->start_address = address;
-		doubly_list_t *lista = imbinare_liste(lista_miniblock,
-			(doubly_list_t *)block->miniblock_list);
+	// e LIPIT de blockul din dreapta
+	if ((adr_final < address && address + size == adr_inceput) ||
+		(adr_final == address && adr_final == 0)) {
+		alloc_block_dreapta(arena, address, size, lista_miniblock, curr);
+		return;
+	}
+
+	block_t *block = (block_t *)curr->data;
+	doubly_list_t *list = ((doubly_list_t *)block->miniblock_list);
+
+	// in cazul in care blockul se afla intre alte 2 blockuri vecine
+	if (adr_final == address && address + size == adr_inceput &&
+		adr_inceput != arena->arena_size)
+		alloc_block_mijloc(arena, address, size, lista_miniblock, curr);
+
+	// e LIPIT de blockul din stanga
+	if ((adr_final == address && address + size < adr_inceput) ||
+		(adr_final == address && address + size == arena->arena_size)) {
+		// ii refac blockului din stanga size ul
+		block->size = ((block_t *)curr->data)->size + size;
+		doubly_list_t *lista_final = imbinare_liste(list, lista_miniblock);
 		// ii atribui lista corecta blockului intreg
-		block->miniblock_list = lista;
-
-		return;
-	}
-	if (adresa_final == address && address + size == arena->arena_size) // e lipit de blockul din stanga
-	{
-		((block_t *)curr->data)->size = ((block_t *)curr->data)->size + size; // ii refac blockului din stanga size ul
-		doubly_list_t *lista = imbinare_liste(((doubly_list_t *)((block_t *)curr->data)->miniblock_list), lista_miniblock);
-		((block_t *)curr->data)->miniblock_list = lista; // ii atribui lista corecta blockului intreg
-		return;
-	}
-	if (adresa_final == address && address + size == adresa_inceput && adresa_inceput != arena->arena_size) // in cazul in care blockul se afla intre alte 2 blockuri vecine si trebuiesc concatenate(cand am 2 granite)
-	{
-
-		((block_t *)curr->data)->size = ((block_t *)curr->data)->size + size + ((block_t *)curr->next->data)->size; // refac size ul intregului block
-		doubly_list_t *lista = imbinare_liste(((doubly_list_t *)((block_t *)curr->data)->miniblock_list), lista_miniblock);
-		doubly_list_t *lista_final = imbinare_liste(lista, ((doubly_list_t *)((block_t *)curr->next->data)->miniblock_list));
-		((block_t *)curr->data)->miniblock_list = lista_final; // ii atribui lista corecta blockului intreg
-		dll_remove_nth_node(arena->alloc_list, numar_nod(arena, curr->next));
-
-		return;
-	}
-	if (adresa_final == address && address + size < adresa_inceput) // e lipit de blockul din stanga
-	{
-		((block_t *)curr->data)->size = ((block_t *)curr->data)->size + size; // ii refac blockului din stanga size ul
-		doubly_list_t *lista = imbinare_liste(((doubly_list_t *)((block_t *)curr->data)->miniblock_list), lista_miniblock);
-		((block_t *)curr->data)->miniblock_list = lista; // ii atribui lista corecta blockului intreg
+		block->miniblock_list = lista_final;
 		return;
 	}
 }

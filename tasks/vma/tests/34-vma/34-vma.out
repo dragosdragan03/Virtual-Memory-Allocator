@@ -5547,7 +5547,7 @@ Miniblock 1:		0x1D9F		-		0x1F9F		| RW-
 Block 35 end
 Invalid address for free.
 Warning: size was bigger than the block size. Writing 64 characters.
-ˆÂU   jqKGyUjXslDIsshZYPi
+ŠV   jqKGyUjXslDIsshZYPi
 FREE_BLOCK 9
 READ_BLOCK
 Total memory: 0x3C74 bytes
@@ -7831,7 +7831,7 @@ Miniblock 1:		0x1D9F		-		0x1F9F		| RW-
 Block 42 end
 K 938742 23207
 ALLOC
-ˆÂU   jqKGyUjXslDIsshZYPi
+ŠV   jqKGyUjXslDIsshZYPi
 FREE_BLOCK 9
 READ_BLOCK 938742 23
 Invalid address for write.
@@ -10112,7 +10112,7 @@ Block 47 end
 This zone was already allocated.
 CK 9
 READ_B
-ˆÂU   jqKG
+ŠV   jqKG
 Invalid address for free.
 This zone was already allocated.
 Invalid address for write.
@@ -10378,10 +10378,10 @@ ALLO
 Invalid address for write.
 KGyUjXslDIsshZYPi
 FREE_BLOCK 9
-ÂU   jqKGyUjXslDIsshZYPi
+V   jqKGyUjXslDIsshZYPi
 FREE_BLOCK 9
 READ_B
-ÂU   
+V   
 Invalid address for free.
 Total memory: 0x3C74 bytes
 Free memory: 0x2E7E bytes
@@ -10627,7 +10627,7 @@ Block 48 begin
 Zone: 0x1D9F - 0x1F9F
 Miniblock 1:		0x1D9F		-		0x1F9F		| RW-
 Block 48 end
-ÂU   jqKGyUjXslDI
+V   jqKGyUjXslDI
 Invalid address for free.
 YPi
 FREE_BLOCK 9
@@ -31076,7 +31076,7 @@ Invalid address for free.
 Invalid address for write.
 0
 ALLOC
-ÂU   jqKGyUjXslD
+V   jqKGyUjXslD
 Invalid address for free.
 Invalid address for write.
 AD_BLOCK 938
@@ -56971,7 +56971,7 @@ Zone: 0x1D9F - 0x1F9F
 Miniblock 1:		0x1D9F		-		0x1F9F		| RW-
 Block 98 end
 Invalid address for free.
-\            1
+a            1
 FREE_BLOCK 3511
 46410
 READ_BLOCK 406 85
