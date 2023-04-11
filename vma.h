@@ -38,7 +38,7 @@ typedef struct { // o lista
 
 doubly_list_t *dll_create(unsigned int data_size);
 
-dll_node_t *dll_get_nth_node(doubly_list_t *list, unsigned int n);
+dll_node_t *dll_get_nth_node(doubly_list_t *list, int n);
 dll_node_t *create_node(void *new_data, int data_size);
 void dll_add_nth_node(doubly_list_t *list, unsigned int n, const void *data);
 void dll_remove_nth_node(doubly_list_t *list, unsigned int n);
@@ -55,3 +55,26 @@ void write(arena_t *arena, const uint64_t address
 	, const uint64_t size, int8_t *data);
 void pmap(const arena_t *arena);
 void mprotect(arena_t *arena, uint64_t address, int8_t *permission);
+
+int numar_nod(arena_t *arena, dll_node_t *nod);
+int numar_miniblock(dll_node_t *minicurr, dll_node_t *curr);
+dll_node_t *verificare_block(arena_t *arena, const uint64_t address
+	, const uint64_t size);
+dll_node_t *verificare_miniblock(arena_t *arena, const uint64_t address);
+dll_node_t *verificare_adresa_miniblock(const uint64_t address
+	, dll_node_t *curr);
+dll_node_t *verificare_miniblock_mprotect(const uint64_t address
+	, dll_node_t *curr);
+dll_node_t *verificare_adresa_block(arena_t *arena, const uint64_t address);
+dll_node_t *nod_cu_miniblock(arena_t *arena, const uint64_t address);
+doubly_list_t *imbinare_liste(doubly_list_t *list1, doubly_list_t *list2);
+int adresa_valida(arena_t *arena, const uint64_t address, const uint64_t size);
+uint64_t adresa_final(dll_node_t *curr);
+uint64_t adresa_inceput(arena_t *arena, dll_node_t *curr);
+void alloc_block_alone(arena_t *arena, const uint64_t address
+	, const uint64_t size, uint64_t adr_fin, dll_node_t *curr);
+void alloc_block_mijloc(arena_t *arena, const uint64_t size
+	, doubly_list_t *lista_miniblock, dll_node_t *curr);
+void alloc_block_dreapta(arena_t *arena, const uint64_t address
+	, const uint64_t size, doubly_list_t *lista_miniblock, dll_node_t *curr);
+uint64_t dimensiune_stanga(dll_node_t *minib, dll_node_t *curr);

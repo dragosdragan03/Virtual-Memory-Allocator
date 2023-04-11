@@ -11,14 +11,14 @@ doubly_list_t *dll_create(unsigned int data_size)
 }
 
 /*returneaza un nod de pe o anumita pozitie*/
-dll_node_t *dll_get_nth_node(doubly_list_t *list, unsigned int n)
+dll_node_t *dll_get_nth_node(doubly_list_t *list, int n)
 {
 	dll_node_t *curr;
 	if (list->size == 0)
 		return 0;
 
 	curr = list->head;
-	for (int i = 0; i < n % list->size; i++)
+	for (unsigned int i = 0; i < n % list->size; i++)
 		curr = curr->next;
 
 	return curr;
@@ -101,7 +101,7 @@ void dll_remove_nth_node(doubly_list_t *list, unsigned int n)
 		n = list->size - 1;
 
 	dll_node_t *curr = list->head;
-	for (int i = 0; i < n - 1; i++)
+	for (unsigned int i = 0; i < n - 1; i++)
 		curr = curr->next; // eu vreau sa sterg pe curr->next
 	dll_node_t *aux = curr->next;
 
@@ -122,7 +122,7 @@ void dll_free(doubly_list_t **pp_list)
 	if (list->size > 0) {
 		dll_node_t *curr = list->head;
 		dll_node_t *aux;
-		for (int i = 0; i < list->size; i++) {
+		for (unsigned int i = 0; i < list->size; i++) {
 			aux = curr->next;
 			free(curr->data); // eliberez memoria din noduri
 			free(curr); // eliberez nodul
@@ -192,10 +192,11 @@ int numar_nod(arena_t *arena, dll_node_t *nod)
 		numar++;
 		curr = curr->next;
 	} while (curr != arena->alloc_list->head);
+	return 0;
 }
 
 /*functie de returnare a pozitiei unui miniblock (o voi folosi in free_block)*/
-int numar_miniblock(arena_t *arena, dll_node_t *minicurr, dll_node_t *curr)
+int numar_miniblock(dll_node_t *minicurr, dll_node_t *curr)
 {
 	block_t *block = (block_t *)curr->data;
 	dll_node_t *nod = ((doubly_list_t *)block->miniblock_list)->head;
@@ -264,7 +265,7 @@ dll_node_t *verificare_miniblock(arena_t *arena, const uint64_t address)
 
 /*functie de returnare al unui miniblock in functie de adresa
 (o folosesc in read si write)*/
-dll_node_t *verificare_adresa_miniblock(arena_t *arena, const uint64_t address
+dll_node_t *verificare_adresa_miniblock(const uint64_t address
 	, dll_node_t *curr)
 {
 	// headul listei de miniblockui, al blockului
@@ -285,8 +286,8 @@ dll_node_t *verificare_adresa_miniblock(arena_t *arena, const uint64_t address
 	return NULL; // nu a fost gasit miniblockul cu adresa respecitva
 }
 
-dll_node_t *verificare_miniblock_mprotect(arena_t *arena
-	, const uint64_t address, dll_node_t *curr)
+dll_node_t *verificare_miniblock_mprotect(const uint64_t address
+	, dll_node_t *curr)
 {
 	block_t *block1 = ((block_t *)curr->data);
 	// headul listei de miniblockui, al blockului
@@ -338,6 +339,7 @@ dll_node_t *nod_cu_miniblock(arena_t *arena, const uint64_t address)
 
 		curr = curr->next;
 	} while (curr != arena->alloc_list->head);
+	return NULL;
 }
 
 /*functie care combina 2 liste (o folosesc in alloc_block)*/
@@ -386,7 +388,7 @@ int adresa_valida(arena_t *arena, const uint64_t address, const uint64_t size)
 	return 0;
 }
 
-uint64_t adresa_final(arena_t *arena, dll_node_t *curr)
+uint64_t adresa_final(dll_node_t *curr)
 {
 	uint64_t adresa_final;
 
@@ -446,8 +448,8 @@ void alloc_block_alone(arena_t *arena, const uint64_t address
 }
 
 /*functie care aloca un block intre alte 2 blockuri*/
-void alloc_block_mijloc(arena_t *arena, const uint64_t address
-	, const uint64_t size, doubly_list_t *lista_miniblock, dll_node_t *curr)
+void alloc_block_mijloc(arena_t *arena, const uint64_t size
+	, doubly_list_t *lista_miniblock, dll_node_t *curr)
 {
 	block_t *block = (block_t *)curr->data;
 	doubly_list_t *list = ((doubly_list_t *)block->miniblock_list);
@@ -504,7 +506,7 @@ void alloc_block(arena_t *arena, const uint64_t address, const uint64_t size)
 		goto jump;
 	}
 
-	adr_final = adresa_final(arena, curr);
+	adr_final = adresa_final(curr);
 	adr_inceput = adresa_inceput(arena, curr);
 
 jump:
@@ -539,7 +541,7 @@ jump:
 	// in cazul in care blockul se afla intre alte 2 blockuri vecine
 	if (adr_final == address && address + size == adr_inceput &&
 		adr_inceput != arena->arena_size)
-		alloc_block_mijloc(arena, address, size, lista_miniblock, curr);
+		alloc_block_mijloc(arena, size, lista_miniblock, curr);
 
 	// e LIPIT de blockul din stanga
 	if ((adr_final == address && address + size < adr_inceput) ||
@@ -555,7 +557,7 @@ jump:
 
 /*functie care calculeaza dimensiunea din stanga a blockului pana
 la miniblockul de vreau sa l sterg (o folosesc in free_block)*/
-uint64_t dimensiune_stanga(arena_t *arena, dll_node_t *minib, dll_node_t *curr)
+uint64_t dimensiune_stanga(dll_node_t *minib, dll_node_t *curr)
 {
 	uint64_t size = 0;
 	block_t *block = (block_t *)curr->data;
@@ -609,7 +611,7 @@ void free_block(arena_t *arena, const uint64_t address)
 				block1->start_address = address + miniblock->size;
 
 			block1->size -= ((miniblock_t *)minicurr->data)->size;
-			int nr_miniblock = numar_miniblock(arena, minicurr, curr);
+			int nr_miniblock = numar_miniblock(minicurr, curr);
 			free(((miniblock_t *)minicurr->data)->rw_buffer);
 			dll_remove_nth_node(list1, nr_miniblock);
 			return;
@@ -619,7 +621,7 @@ void free_block(arena_t *arena, const uint64_t address)
 		// iar pentru cea din stanga il pastrez pe acelasi si doar il updatez
 
 		// dimensiunea listei din stanga de miniblockuri
-		const uint64_t dim = dimensiune_stanga(arena, minicurr, curr);
+		const uint64_t dim = dimensiune_stanga(minicurr, curr);
 		const uint64_t size = ((miniblock_t *)minicurr->data)->size;
 		// fac un block nou pentru partea din dreapta
 		block_t *block = malloc(sizeof(block_t));
@@ -632,9 +634,9 @@ void free_block(arena_t *arena, const uint64_t address)
 		// il adaug in lista de blockuri, blockul creat
 		dll_add_nth_node(arena->alloc_list, numar_nod(arena, curr) + 1, block);
 		free(block);
-		int nr_minib = numar_miniblock(arena, minicurr, curr);
+		unsigned	int nr_minib = numar_miniblock(minicurr, curr);
 		dll_node_t *aux = minicurr->next;
-		for (int i = nr_minib + 1; i < list1->size; i++) {
+		for (unsigned int i = nr_minib + 1; i < list1->size; i++) {
 			dll_add_nth_node(lista_noua, lista_noua->size, aux->data);
 			aux = aux->next;
 		}
@@ -661,7 +663,7 @@ void read(arena_t *arena, uint64_t address, uint64_t size)
 	}
 
 	// miniblockul de unde vreau sa citesc
-	dll_node_t *minicurr = verificare_adresa_miniblock(arena, address, curr);
+	dll_node_t *minicurr = verificare_adresa_miniblock(address, curr);
 
 	uint64_t adresa_inceput_block = ((block_t *)curr->data)->start_address;
 	uint64_t dimensiune = ((block_t *)curr->data)->size;
@@ -702,7 +704,7 @@ void read(arena_t *arena, uint64_t address, uint64_t size)
 
 	adresa_de_citit = address;
 	k = 0;
-	minicurr = verificare_adresa_miniblock(arena, address, curr);
+	minicurr = verificare_adresa_miniblock(address, curr);
 	// cat timp nu ajung la final si cat timp am ce sa citesc
 	while (adr_final > adresa_de_citit && k != size) {
 		// de unde incepe miniblockul
@@ -741,7 +743,7 @@ void write(arena_t *arena, const uint64_t address, const uint64_t size
 		return;
 	}
 	// miniblockul unde vreau sa scriu
-	dll_node_t *minicurr = verificare_adresa_miniblock(arena, address, curr);
+	dll_node_t *minicurr = verificare_adresa_miniblock(address, curr);
 
 	uint64_t adresa_inceput_block = ((block_t *)curr->data)->start_address;
 	uint64_t dimensiune = ((block_t *)curr->data)->size;
@@ -777,7 +779,7 @@ void write(arena_t *arena, const uint64_t address, const uint64_t size
 
 	k = 0;
 	adr_de_inserat = address;
-	minicurr = verificare_adresa_miniblock(arena, address, curr);
+	minicurr = verificare_adresa_miniblock(address, curr);
 	// cat timp nu ajung la final si cat timp am ce sa pun din data
 	while (adr_final > adr_de_inserat && k != size) {
 		// de unde incepe miniblockul
@@ -906,7 +908,7 @@ void mprotect(arena_t *arena, uint64_t address, int8_t *permission)
 	}
 
 	// miniblockul unde vreau sa schimb permisiunile
-	dll_node_t *minicurr = verificare_miniblock_mprotect(arena, address, curr);
+	dll_node_t *minicurr = verificare_miniblock_mprotect(address, curr);
 
 	if (!minicurr) {
 		printf("Invalid address for mprotect.\n");
@@ -915,7 +917,7 @@ void mprotect(arena_t *arena, uint64_t address, int8_t *permission)
 
 	((miniblock_t *)minicurr->data)->perm = 0;
 
-	char *token = strtok(permission, " ");
+	char *token = strtok((char *)permission, " ");
 
 	while (1) {
 		if (!token)

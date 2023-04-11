@@ -3,7 +3,6 @@
 
 int main(void)
 {
-	char sir[100];
 	char token[100];
 
 	while (scanf("%s", token)) { // citesc cat timp sunt randuri de citit
@@ -54,8 +53,8 @@ int main(void)
 			scanf("%ld", &adresa);
 			scanf("%ld", &dimensiune);
 			int8_t *data = malloc(dimensiune * sizeof(int8_t));
-			char gol = getc(stdin);
-			for (int i = 0; i < dimensiune; i++)
+			getc(stdin);
+			for (uint64_t i = 0; i < dimensiune; i++)
 				data[i] = getc(stdin);
 
 			write(arena, adresa, dimensiune, data);
@@ -71,7 +70,7 @@ int main(void)
 			uint64_t adresa;
 			scanf("%ld", &adresa);
 			int8_t permisiune[100];
-			fgets(permisiune, 100, stdin);
+			fgets((char *)permisiune, 100, stdin);
 			mprotect(arena, adresa, permisiune);
 			continue;
 		}
