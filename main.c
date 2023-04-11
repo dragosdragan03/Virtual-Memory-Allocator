@@ -1,3 +1,4 @@
+// Copyright Dragan Dragos Ovidiu 313CAb 2022-2023
 #include "vma.h"
 
 int main(void)

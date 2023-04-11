@@ -1,0 +1,35 @@
+Nume: Dragan Dragos Ovidiu
+Grupă: 313CA
+
+Virtual Memory Allocator 1
+
+### Descriere:
+
+La inceputul codului m am folosit de cateva functii pe care le am creat si le voi folosi pe parcursul programului pentru a prelucra lista:
+- dll_create 
+- dll_get_nth_node
+- create_node
+- dll_add_nth_node
+- dll_remove_nth_node
+- dll_free 
+
+In functia alloc_block pentru a afla locul unde trebuie sa inserez un miniblock am folosit 2 variabile: adresa_inceput si adresa_final
+-adresa_final reprezinta adresa unde se termina blockul din stanga celui unde vreau sa inserez
+-adresa_inceput reprezinta adresa de unde incepe blockul din dreapta celui unde vreau sa inserez
+Pentru a afla nodul (blockul) dupa care vreau sa inserez blockul, am folosit functia verificare_block pentru a returna blockul din stanga adresei.
+
+In functia free_block am verificat mai intai sa vad daca miniblockul se afla intr un block de size 1 ca sa l pot sterge pe tot. In caz contrar, insemna ca sunt mai multe miniblockuri in blockul respectiv si am verificat daca se afla la inceputul sau la finalul listei de miniblockuri pentru a il sterge. Daca nu intra in niciunul din cazurile mentionate, insemna ca se afla la mijloc si trebuia sa creez un nou block. Pentru acest caz am creat o lista noua in care am adaugat miniblockurile din blockul initial, iar blockului din stanga i am actualizat valorile (dimensiunea, am sters miniblockurile de care nu mai era nevoie), iar la final am sters miniblockul cu adresa respectiva. 
+
+### Comentarii asupra temei:
+
+* Crezi că ai fi putut realiza o implementare mai bună?
+O implementare mai buna ar fi fost sa mai fac inca o functie care mi creaza lista cu miniblockul de vreau sa l inserez si dupa care sa o apelez unde am nevoie de aceasta.
+
+* Ce ai invățat din realizarea acestei teme?
+Am invatat:
+- sa folosesc si sa inteleg mai bine listele;
+- sa fac cast unor variabile;
+- sa inteleg mai bine conceptul de memorie si cum functioneaza aceasta.
+
+* Alte comentarii
+-----------------

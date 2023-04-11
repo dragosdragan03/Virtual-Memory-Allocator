@@ -1,15 +1,15 @@
-==13843== Memcheck, a memory error detector
-==13843== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==13843== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==13843== Command: /home/student/Desktop/de_predat/SDA/Tema1/sd-2023-homeworks/Tema1_SDA/vma
-==13843== Parent PID: 13842
-==13843== 
-==13843== 
-==13843== HEAP SUMMARY:
-==13843==     in use at exit: 0 bytes in 0 blocks
-==13843==   total heap usage: 12 allocs, 12 frees, 8,401 bytes allocated
-==13843== 
-==13843== All heap blocks were freed -- no leaks are possible
-==13843== 
-==13843== For lists of detected and suppressed errors, rerun with: -s
-==13843== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==8129== Memcheck, a memory error detector
+==8129== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==8129== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==8129== Command: /home/student/Desktop/de_predat/SDA/Tema1/sd-2023-homeworks/Tema1_SDA/vma
+==8129== Parent PID: 8128
+==8129== 
+==8129== 
+==8129== HEAP SUMMARY:
+==8129==     in use at exit: 0 bytes in 0 blocks
+==8129==   total heap usage: 12 allocs, 12 frees, 8,401 bytes allocated
+==8129== 
+==8129== All heap blocks were freed -- no leaks are possible
+==8129== 
+==8129== For lists of detected and suppressed errors, rerun with: -s
+==8129== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
