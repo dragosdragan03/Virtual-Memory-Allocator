@@ -511,8 +511,7 @@ void alloc_block(arena_t *arena, const uint64_t address, const uint64_t size)
 
 jump:
 
-	uint64_t dim_block = address + size;
-	if (((adr_final < address || !adr_final) && dim_block < adr_inceput) ||
+	if (((adr_final < address || !adr_final) && address + size < adr_inceput) ||
 		!arena->alloc_list->size ||
 		(adr_final < address && adr_inceput == arena->arena_size)) {
 		alloc_block_alone(arena, address, size, adr_final, curr);
