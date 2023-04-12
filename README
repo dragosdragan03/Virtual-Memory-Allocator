@@ -13,17 +13,40 @@ La inceputul codului m am folosit de cateva functii pe care le am creat si le vo
 - dll_remove_nth_node
 - dll_free 
 
+In functia alloc_arena aloc dinamic o arena, ii setez size ul dat ca input si aloc dinamic si o lista de blockuri.
+
+In functia dealloc_arena parcurg toate miniblockurile dintr un block si le eliberez pe fiecare, iar apoi eliberez si blockul respectiv.
+La final eliberez toata arena.
+
 In functia alloc_block pentru a afla locul unde trebuie sa inserez un miniblock am folosit 2 variabile: adresa_inceput si adresa_final
--adresa_final reprezinta adresa unde se termina blockul din stanga celui unde vreau sa inserez
--adresa_inceput reprezinta adresa de unde incepe blockul din dreapta celui unde vreau sa inserez
+-adresa_final reprezinta adresa unde se termina blockul din stanga celui dupa care vreau sa inserez
+-adresa_inceput reprezinta adresa de unde incepe blockul din dreapta blockului unde vreau sa il inserez
 Pentru a afla nodul (blockul) dupa care vreau sa inserez blockul, am folosit functia verificare_block pentru a returna blockul din stanga adresei.
 
-In functia free_block am verificat mai intai sa vad daca miniblockul se afla intr un block de size 1 ca sa l pot sterge pe tot. In caz contrar, insemna ca sunt mai multe miniblockuri in blockul respectiv si am verificat daca se afla la inceputul sau la finalul listei de miniblockuri pentru a il sterge. Daca nu intra in niciunul din cazurile mentionate, insemna ca se afla la mijloc si trebuia sa creez un nou block. Pentru acest caz am creat o lista noua in care am adaugat miniblockurile din blockul initial, iar blockului din stanga i am actualizat valorile (dimensiunea, am sters miniblockurile de care nu mai era nevoie), iar la final am sters miniblockul cu adresa respectiva. 
+In functia free_block am verificat mai intai sa vad daca miniblockul se afla intr un block de size 1 ca sa l pot sterge pe tot.
+In caz contrar, insemna ca sunt mai multe miniblockuri in blockul respectiv si am verificat daca se afla la inceputul sau la finalul listei de miniblockuri pentru a il sterge.
+Daca nu intra in niciunul din cazurile mentionate, insemna ca se afla la mijloc si trebuia sa creez un nou block. 
+Pentru acest caz am creat o lista noua in care am adaugat miniblockurile din blockul initial, iar blockului din stanga i am actualizat valorile (dimensiunea, am sters miniblockurile de care nu mai era nevoie),
+iar la final am sters miniblockul cu adresa respectiva. 
 
+In functia write am verificat mai intai sa vad daca exista blockul cu adresa respectiva.
+In cazul in care exista imi returneaza miniblockul care contine adresa respectiva.
+La inceputul functiei parcurg blockul cu toate miniblockurile pentru a afla daca toate au permisiune de scriere.
+Apoi incepand cu parametrul address am introdus in vectorul meu rw_buffer datele din data pana la address + size.
+
+In functia read am verificat mai intai sa vad daca exista blockul cu adresa respectiva.
+In cazul in care exista imi returneaza miniblockul care contine adresa respectiva.
+La inceputul functiei parcurg blockul cu toate miniblockurile pentru a afla daca toate au permisiune de citire.
+Apoi incepand cu parametrul address am citit din vectorul meu rw_buffer datele pana la address + size.
+
+In functia pmap afisez toate datele cerute: Total memory, Free memory, Number of allocated blocks, Number of allocated miniblocks, precum si permissions.
+
+In functia mprotect verific daca exista miniblockul, iar in cazul in care imi returneaza un nod valid ii schimb permisiunile cu cele cerute.
+ 
 ### Comentarii asupra temei:
 
 * Crezi că ai fi putut realiza o implementare mai bună?
-O implementare mai buna ar fi fost sa mai fac inca o functie care mi creaza lista cu miniblockul de vreau sa l inserez si dupa care sa o apelez unde am nevoie de aceasta.
+O implementare mai buna ar fi fost sa mai fac inca o functie pentru alloc_block care mi creaza lista cu miniblockul de vreau sa l inserez si dupa care sa o apelez unde am nevoie de aceasta.
 
 * Ce ai invățat din realizarea acestei teme?
 Am invatat:
